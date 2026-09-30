@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: fraudshield-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: fraudshield_user
+      POSTGRES_PASSWORD: fraudshield_password
+      POSTGRES_DB: fraudshield_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fraudshield_user -d fraudshield_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fraudshield-backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "False"
+      DATABASE_URL: postgresql+psycopg2://fraudshield_user:fraudshield_password@postgres:5432/fraudshield_db
+      USE_SQLITE: "False"
+      SECRET_KEY: ${SECRET_KEY:-production_secret_key_change_me_before_deploying}
+      JWT_SECRET: ${JWT_SECRET:-production_jwt_secret_key_change_me_before_deploying}
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000,http://localhost
+      NOTIFICATION_PROVIDER: mock
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fraudshield-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres_data:

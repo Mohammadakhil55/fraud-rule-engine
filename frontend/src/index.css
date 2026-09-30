@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 248 250 252; /* slate-50 */
+    --surface: 255 255 255;    /* white */
+    --surface-hover: 241 245 249; /* slate-100 */
+    --border: 226 232 240;     /* slate-200 */
+    --text-primary: 15 23 42;  /* slate-900 */
+    --text-secondary: 71 85 105; /* slate-600 */
+    --text-muted: 148 163 184; /* slate-400 */
+  }
+
+  .dark {
+    --background: 11 15 25;    /* deep navy/slate-950 */
+    --surface: 19 26 42;       /* dark slate surface */
+    --surface-hover: 30 41 59; /* slate-800 */
+    --border: 30 41 59;        /* slate-800 */
+    --text-primary: 248 250 252; /* slate-50 */
+    --text-secondary: 148 163 184; /* slate-400 */
+    --text-muted: 100 116 139; /* slate-500 */
+  }
+
+  body {
+    @apply bg-background text-text-primary antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
